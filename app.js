@@ -23,10 +23,10 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
-app.use((req, res, next) => {
-    res.status(500).send({ message: 'Произошла ошибка сервера' })
-  next()
-  })
+// app.use((req, res, next) => {
+//     res.status(500).send({ message: 'Произошла ошибка сервера' })
+//   next()
+//   })
 
 app.use((req, res, next) => {
     res.status(404).send({ message: 'Не найдена' })
