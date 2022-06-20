@@ -20,11 +20,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
+app.use('/', require('./routes/users'));
+app.use('/', require('./routes/cards'));
 
-app.use((req, res) => {
+app.use((err, req, res, next) => {
     res.status(500).send({ message: 'Произошла ошибка сервера' })
+  next(err)
   })
 
 app.listen(PORT, () => {

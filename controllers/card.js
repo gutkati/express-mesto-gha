@@ -8,8 +8,7 @@ function describeErrors(err, res) {
   if (err.name === "ValidationError" || err.name === "CastError") {
     res.status(ERROR_CODE).send({message: 'Переданы некорректные данные'})
   } else {
-
-    res.status(ERROR_SERVER).send({message: 'Произошла ошибка сервера'})
+    return res.status(ERROR_SERVER).send({message: 'Произошла ошибка сервера'})
   }
 }
 
@@ -17,7 +16,7 @@ function addError(req, res, card) {
   if (!card) {
     res.status(ERROR_REQUEST).send({message: "Карточка с указанным _id не найдена"})
   } else {
-    res.status(200).send(card);
+    return res.status(200).send(card);
   }
 }
 

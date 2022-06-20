@@ -7,10 +7,8 @@ const ERROR_SERVER = 500;
 function describeErrors(err, res) {
   if (err.name === "ValidationError" || err.name === "CastError") {
     res.status(ERROR_CODE).send({message: 'Переданы некорректные данные'})
-
   } else {
-
-    return res.status(ERROR_SERVER).send({message: 'Произошла ошибка сервера'})
+    return res.status(ERROR_SERVER).send({message: 'Произошла ошибка'})
 
   }
 }
