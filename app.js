@@ -6,7 +6,7 @@ const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(bodyParser.json());  //для собирания JSON-формата
-app.use(bodyParser.urlencoded({ extended: true })); //для приема веб-страниц внутри POST-запроса
+//app.use(bodyParser.urlencoded({ extended: true })); //для приема веб-страниц внутри POST-запроса
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
     useNewUrlParser: true
@@ -20,8 +20,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/users', require('./routes/cards'));
-app.use('/cards', require('./routes/users'));
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
 app.use((req, res) => {
     res.status(500).send({ message: 'Произошла ошибка сервера' })

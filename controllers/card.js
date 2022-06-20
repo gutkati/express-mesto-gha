@@ -29,14 +29,14 @@ module.exports.createCard = (req, res, next) => {
   Card.create({name, link, owner: id})
     .then((card) => res.status(201).send({card}))
     .catch((err) => describeErrors(err, res))
-    .catch((err) => next(err))
+    //.catch((err) => next(err))
 }
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})          //поиск всех документов по параметрам
     .then(cards => res.status(200).send(cards))
     .catch((err) => describeErrors(err, res))
-    .catch((err) => next(err))
+    //.catch((err) => next(err))
 }
 
 module.exports.deleteCard = (req, res, next) => {
@@ -45,7 +45,7 @@ module.exports.deleteCard = (req, res, next) => {
       addError(req, res, card)
     })
     .catch((err) => describeErrors(err, res))
-    .catch((err) => next(err))
+    //.catch((err) => next(err))
 }
 
 module.exports.likeCard = (req, res, next) => {
@@ -61,7 +61,7 @@ module.exports.likeCard = (req, res, next) => {
       addError(req, res, card);
     })
     .catch((err) => describeErrors(err, res))
-    .catch((err) => next(err))
+    //.catch((err) => next(err))
 }
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -78,5 +78,5 @@ module.exports.dislikeCard = (req, res, next) => {
       addError(req, res, card);
     })
     .catch((err) => describeErrors(err, res))
-    .catch((err) => next(err))
+    //.catch((err) => next(err))
 };

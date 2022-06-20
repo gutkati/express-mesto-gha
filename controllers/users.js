@@ -10,36 +10,37 @@ function describeErrors(err, res) {
 
   } else {
 
-    res.status(ERROR_SERVER).send({message: 'Произошла ошибка сервера'})
+    return res.status(ERROR_SERVER).send({message: 'Произошла ошибка сервера'})
+
   }
 }
 
 module.exports.createUser = (req, res, next) => {  //создать пользователя
   const{ name, about, avatar } = req.body;
   User.create({ name, about, avatar })  //записываем данные в базу
-    .then(user => res.status(201).send({ data: user })) //возвращаем записанные данные в базу пользователю
+    .then(user => res.status(201).send(user)) //возвращаем записанные данные в базу пользователю
     .catch((err) => describeErrors(err, res))
-    .catch((err) => next(err))
+    //.catch((err) => next(err))
 }
 
 module.exports.getUsers = (req, res, next) => {
     User.find({})     //поиск всех документов по параметрам
-    .then(users => res.status(200).send({ data: users }))
+    .then(users => res.status(200).send(users))
     .catch((err) => describeErrors(err, res))
-    .catch((err) => next(err))
+   // .catch((err) => next(err))
 }
 
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.id)  //поиск конкретного документа, ищет запись по _id
     .then((user) => {
       if (!user) {
-        res.status(ERROR_REQUEST).send({message: "Пользователь по указанному Id не найден"});
+        res.status(ERROR_REQUEST).send({message: "Пользователь по указанному Id не найден"})
       } else {
-        res.status(200).send({data: user})
+        res.status(200).send(user)
       }
 })
     .catch((err) => describeErrors(err, res))
-    .catch((err) => next(err))
+    //.catch((err) => next(err))
 }
 
 module.exports.updateProfile = (req, res, next) => {
@@ -52,9 +53,9 @@ module.exports.updateProfile = (req, res, next) => {
       runValidators: true
     }
     )
-    .then(user => res.status(200).send({ data: user }))
+    .then(user => res.status(200).send(user))
     .catch((err) => describeErrors(err, res))
-    .catch((err) => next(err))
+    //.catch((err) => next(err))
 }
 
 module.exports.updateAvatar = (req, res, next) => {
@@ -67,7 +68,7 @@ module.exports.updateAvatar = (req, res, next) => {
       runValidators: true
     }
     )
-    .then(user => res.status(200).send({ data: user }))
+    .then(user => res.status(200).send(user))
     .catch((err) => describeErrors(err, res))
-    .catch((err) => next(err))
+    //.catch((err) => next(err))
 }
