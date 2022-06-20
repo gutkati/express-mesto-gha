@@ -21,7 +21,7 @@ function addError(req, res, card) {
   }
 }
 
-module.exports.createCard = (req, res, next) => {
+module.exports.createCard = (req, res) => {
   const {name, link} = req.body;
 
   const id = req.user._id;  //id пользователя взяли из мидлвэры в файле app.js
@@ -29,26 +29,23 @@ module.exports.createCard = (req, res, next) => {
   Card.create({name, link, owner: id})
     .then((card) => res.status(201).send({card}))
     .catch((err) => describeErrors(err, res))
-    //.catch((err) => next(err))
 }
 
-module.exports.getCards = (req, res, next) => {
+module.exports.getCards = (req, res) => {
   Card.find({})          //поиск всех документов по параметрам
     .then(cards => res.status(200).send(cards))
     .catch((err) => describeErrors(err, res))
-    //.catch((err) => next(err))
 }
 
-module.exports.deleteCard = (req, res, next) => {
+module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove({_id: req.params.id, owner: req.user._id})  //удаление
     .then(card => {
       addError(req, res, card)
     })
     .catch((err) => describeErrors(err, res))
-    //.catch((err) => next(err))
 }
 
-module.exports.likeCard = (req, res, next) => {
+module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     {_id: req.params.id, owner: req.user._id},
   { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
@@ -61,10 +58,9 @@ module.exports.likeCard = (req, res, next) => {
       addError(req, res, card);
     })
     .catch((err) => describeErrors(err, res))
-    //.catch((err) => next(err))
 }
 
-module.exports.dislikeCard = (req, res, next) => {
+module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
   {_id: req.params.id, owner: req.user._id},
   { $pull: { likes: req.user._id } }, // убрать _id из массива
@@ -78,5 +74,4 @@ module.exports.dislikeCard = (req, res, next) => {
       addError(req, res, card);
     })
     .catch((err) => describeErrors(err, res))
-    //.catch((err) => next(err))
 };
