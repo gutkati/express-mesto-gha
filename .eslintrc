@@ -1,7 +1,4 @@
 {
   "extends": "airbnb-base",
-  "rules": {
-    "eslint no-underscore-dangle": ["error", {"allow": ["_id"]}] // нижнее подчеркивание не работает
-  }
-
+  "eslint no-underscore-dangle": ["error", {"allow": ["_id"]}] // нижнее подчеркивание не работает
 }
