@@ -32,21 +32,21 @@ module.exports.createCard = (req, res) => {
 
 module.exports.getCards = (req, res) => {
   Card.find({})          //поиск всех документов по параметрам
-    .then(cards => res.status(200).send(cards))
+    .then((cards) => res.status(200).send(cards))
     .catch((err) => describeErrors(err, res))
 }
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove({_id: req.params.id, owner: req.user._id})  //удаление
-    .then(card => {
+  Card.findOneAndDelete({id: req.params._id, owner: req.user._id})  //удаление
+    .then((card) => {
       addError(req, res, card)
     })
     .catch((err) => describeErrors(err, res))
 }
 
 module.exports.likeCard = (req, res) => {
-  Card.findByIdAndUpdate(
-    {_id: req.params.id, owner: req.user._id},
+  Card.findOneAndUpdate(
+    {id: req.params._id, owner: req.user._id},
   { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
   {
     new: true,
@@ -60,8 +60,8 @@ module.exports.likeCard = (req, res) => {
 }
 
 module.exports.dislikeCard = (req, res) => {
-  Card.findByIdAndUpdate(
-  {_id: req.params.id, owner: req.user._id},
+  Card.findOneAndUpdate(  //удалит первое совпадение по id
+  {id: req.params._id, owner: req.user._id},
   { $pull: { likes: req.user._id } }, // убрать _id из массива
   {
     new: true,
