@@ -37,7 +37,7 @@ module.exports.getCards = (req, res) => {
 }
 
 module.exports.deleteCard = (req, res) => {
-  Card.findOneAndDelete({id: req.params._id, owner: req.user._id})  //удаление
+  Card.findByIdAndDelete(req.params.cardId)  //удаление
     .then((card) => {
       addError(req, res, card)
     })
@@ -45,8 +45,8 @@ module.exports.deleteCard = (req, res) => {
 }
 
 module.exports.likeCard = (req, res) => {
-  Card.findOneAndUpdate(
-    {id: req.params._id, owner: req.user._id},
+  Card.findByIdAndUpdate(
+    (req.params.cardId),
   { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
   {
     new: true,
@@ -60,8 +60,8 @@ module.exports.likeCard = (req, res) => {
 }
 
 module.exports.dislikeCard = (req, res) => {
-  Card.findOneAndUpdate(  //удалит первое совпадение по id
-  {id: req.params._id, owner: req.user._id},
+  Card.findByIdAndUpdate(  //удалит первое совпадение по id
+  (req.params.cardId),
   { $pull: { likes: req.user._id } }, // убрать _id из массива
   {
     new: true,
