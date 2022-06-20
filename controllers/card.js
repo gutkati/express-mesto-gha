@@ -37,7 +37,7 @@ module.exports.getCards = (req, res) => {
 }
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndDelete(req.params.cardId)  //удаление
+  Card.findByIdAndDelete(req.params.cardId)  //удаление карточки по Id
     .then((card) => {
       addError(req, res, card)
     })
@@ -50,7 +50,6 @@ module.exports.likeCard = (req, res) => {
   { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
   {
     new: true,
-    //runValidators: true
   },
 )
     .then((card) => {
@@ -65,7 +64,6 @@ module.exports.dislikeCard = (req, res) => {
   { $pull: { likes: req.user._id } }, // убрать _id из массива
   {
     new: true,
-    //runValidators: true
   },
 )
 
