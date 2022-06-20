@@ -27,7 +27,7 @@ module.exports.getUsers = (req, res) => {
 }
 
 module.exports.getUserById = (req, res) => {
-  User.findById(req.params._id)  //поиск конкретного документа, ищет запись по _id
+  User.findById(req.params.userId)//поиск конкретного документа, ищет запись по _id
     .then((user) => {
       if (!user) {
         res.status(ERROR_REQUEST).send({message: "Пользователь по указанному Id не найден"})

@@ -50,7 +50,7 @@ module.exports.likeCard = (req, res) => {
   { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
   {
     new: true,
-    runValidators: true
+    //runValidators: true
   },
 )
     .then((card) => {
@@ -65,7 +65,7 @@ module.exports.dislikeCard = (req, res) => {
   { $pull: { likes: req.user._id } }, // убрать _id из массива
   {
     new: true,
-    runValidators: true
+    //runValidators: true
   },
 )
 
