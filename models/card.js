@@ -4,18 +4,18 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
-    require: true,   //обязательное поле для заполнения
+    required: true,   //обязательное поле для заполнения
     minlength: 2,
     maxlength: 30
   },
   link: {
     type: String,
-    require: true,
+    required: true,
   },
   owner: {
     type: ObjectId,
     ref: 'user',
-    require: true,
+    required: true,
   },
   likes: [{
     type: ObjectId,
