@@ -1,43 +1,90 @@
 const User = require('../models/user');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const ConflictError = require('../errors/ConflictError'); // 409
+const NotFoundError = require('../errors/NotFoundError'); // 404
+const UnauthorizedError = require('../errors/UnauthorizedError'); // 401
+const ValidationError = require('../errors/ValidationError'); // 400
 
-const ERROR_CODE = 400;
-const ERROR_REQUEST = 404;
-const ERROR_SERVER = 500;
+const SECRET_KEY = "some-secret-key";
 
-function describeErrors(err, res) {
+function describeErrors(err, res, next) {
   if (err.name === 'ValidationError' || err.name === 'CastError') {
-    res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные' });
+    next(new ValidationError('Переданы некорректные данные'));
   } else {
-    res.status(ERROR_SERVER).send({ message: 'Произошла ошибка' });
+    next(err);
   }
 }
 
-module.exports.createUser = (req, res) => { // создать пользователя
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar }) // записываем данные в базу
-    .then((user) => res.status(201).send(user)) // возвращаем записанные данные в базу пользователю
-    .catch((err) => describeErrors(err, res));
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email }).select('+password') // вызвать метод select, так получаем хэш пароля
+    .then((user) => {
+      if(!user) { // пользователь не найден - отклоняем промис
+        throw new UnauthorizedError('Неправильные почта или пароль')
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) { // хэши не совпали - отклоняем промис
+            throw new UnauthorizedError('Неправильные почта или пароль')
+          }
+
+          return user;
+      })
+    })
+    .then((user) => {
+      const token = jwt.sign({_id: user._id}, SECRET_KEY, { expiresIn: '7d' })
+      res.cookie('jwt', token, { httpOnly: true, sameSite: true }).send({ token })
+    })
+    .catch((err) => next(err));
 };
 
-module.exports.getUsers = (req, res) => {
+module.exports.createUser = (req, res, next) => { // создать пользователя
+  const { name, about, avatar, email, password } = req.body;
+  bcrypt.hash(password, 10) // хешируем пароль
+    .then((hash) => User.create({ name, about, avatar, email, password: hash })) // записываем данные в базу
+    .then(() => res.status(201).send({ name, about, avatar, email })) // возвращаем записанные данные в базу пользователю
+    .catch((err) => {
+      if(err.code === 11000) { // если пользователь регистрируется по существующему в базе email
+        next(new ConflictError('Данный email уже существует'))
+      } else {
+        describeErrors(err, res, next)
+      }
+    });
+};
+
+module.exports.getUsers = (req, res, next) => {
   User.find({}) // поиск всех документов по параметрам
     .then((users) => res.status(200).send(users))
-    .catch((err) => describeErrors(err, res));
+    .catch(next);
 };
 
-module.exports.getUserById = (req, res) => {
-  User.findById(req.params.userId) // поиск конкретного документа, ищет запись по _id
+module.exports.getInfoAboutMe = (req, res, next) => {
+  User.findById(req.user._id) // поиск конкретного документа, ищет запись по _id
     .then((user) => {
       if (!user) {
-        res.status(ERROR_REQUEST).send({ message: 'Пользователь по указанному Id не найден' });
+        throw new NotFoundError('Пользователь по указанному Id не найден');
       } else {
         res.status(200).send(user);
       }
     })
-    .catch((err) => describeErrors(err, res));
+    .catch((err) => describeErrors(err, res, next));
+}
+
+module.exports.getUserById = (req, res, next) => {
+  User.findById(req.params.userId) // поиск конкретного документа, ищет запись по _id
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь по указанному Id не найден');
+      } else {
+        res.status(200).send(user);
+      }
+    })
+    .catch((err) => describeErrors(err, res, next));
 };
 
-module.exports.updateProfile = (req, res) => {
+module.exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -48,10 +95,10 @@ module.exports.updateProfile = (req, res) => {
     },
   )
     .then((user) => res.status(200).send(user))
-    .catch((err) => describeErrors(err, res));
+    .catch((err) => describeErrors(err, res, next));
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -62,5 +109,5 @@ module.exports.updateAvatar = (req, res) => {
     },
   )
     .then((user) => res.status(200).send(user))
-    .catch((err) => describeErrors(err, res));
+    .catch((err) => describeErrors(err, res, next));
 };
