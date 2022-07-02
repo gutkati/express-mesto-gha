@@ -19,7 +19,7 @@ module.exports.creatUserValid = celebrate({
 
 module.exports.creatCardValid = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().min(2).max(30).required(),
     link: Joi.string().required().pattern(/https?:\/\/w?w?w?\.?[\w\W]{1,}/),
   })
 })
