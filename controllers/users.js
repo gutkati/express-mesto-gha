@@ -57,11 +57,11 @@ module.exports.createUser = (req, res, next) => { // создать пользо
 module.exports.getUsers = (req, res, next) => {
   User.find({}) // поиск всех документов по параметрам
     .then((users) => res.status(200).send(users))
-    .catch(next);
+    .catch((err) => next(err));
 };
 
 module.exports.getInfoAboutMe = (req, res, next) => {
-  User.findById(req.user._id) // поиск конкретного документа, ищет запись по _id
+  User.findOne({ id: req.params.id }) // поиск конкретного документа, ищет запись по _id
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь по указанному Id не найден');
@@ -70,6 +70,12 @@ module.exports.getInfoAboutMe = (req, res, next) => {
       }
     })
     .catch((err) => describeErrors(err, res, next));
+    // .then((user) => {
+    //   res.send({
+    //     name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+    //   })
+    // })
+    // .catch((err) => next(err))
 }
 
 module.exports.getUserById = (req, res, next) => {

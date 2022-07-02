@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser'); // мидлвэр
+const cookieParser = require('cookie-parser')
 const { errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth')
@@ -12,6 +13,7 @@ const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(bodyParser.json()); // для собирания JSON-формата
+app.use(cookieParser()) // подключаем парсер кук как мидлвэр
 // app.use(bodyParser.urlencoded({ extended: true })); //для приема веб-страниц внутри POST-запроса
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -19,8 +21,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 // роуты без авторизации
-app.post('/signin', loginValid, login);
 app.post('/signup', creatUserValid, createUser);
+app.post('/signin', loginValid, login);
 
 // авторизация
 app.use(auth);
@@ -39,9 +41,9 @@ app.use((req, res, next) => {
   if (err.statusCode) {
     return res.status(err.statusCode).send({ message: err.message })
   }
+
   res.status(500).send({ message: 'На сервере произошла ошибка' })
 })
-
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
