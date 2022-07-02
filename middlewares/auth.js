@@ -23,25 +23,6 @@ module.exports = (req, res, next) => {
   next();
 }
 
-// module.exports = (req, res, next) => {
-//   if (!req.cookies) {
-//     return new UnauthorizedError('Пользователь не авторизован');
-//   }
-//
-//   const token = req.cookies.jwt;
-//   let payload;
-//
-//   try {
-//     payload = jwt.verify(token, SECRET_KEY);
-//   } catch (err) {
-//     next(new UnauthorizedError('Пользователь не авторизован'));
-//   }
-//
-//   req.user = payload; // записываем пейлоуд в объект запроса
-//
-//   next();
-// };
-
 // const handleAuthError = (res) => {
 //   res
 //     .status(401)
