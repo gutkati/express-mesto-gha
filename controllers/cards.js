@@ -40,7 +40,7 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => {
       addError(req, res, card);
 
-      if(card === null) { // нет прав на удаление крточки другого пользователя
+      if(!req.user._id && !card.owner.toString()) { // нет прав на удаление крточки другого пользователя
         throw new ForbiddenError('Вы не можете удалить эту карточку')
       }
     })
