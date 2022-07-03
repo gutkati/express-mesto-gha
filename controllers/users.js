@@ -70,12 +70,7 @@ module.exports.getInfoAboutMe = (req, res, next) => {
       }
     })
     .catch((err) => describeErrors(err, res, next));
-    // .then((user) => {
-    //   res.send({
-    //     name: user.name, about: user.about, avatar: user.avatar, email: user.email,
-    //   })
-    // })
-    // .catch((err) => next(err))
+
 }
 
 module.exports.getUserById = (req, res, next) => {

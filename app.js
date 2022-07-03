@@ -14,7 +14,6 @@ const app = express();
 
 app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(cookieParser()) // подключаем парсер кук как мидлвэр
-// app.use(bodyParser.urlencoded({ extended: true })); //для приема веб-страниц внутри POST-запроса
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,

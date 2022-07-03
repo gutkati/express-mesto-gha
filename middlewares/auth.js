@@ -17,7 +17,6 @@ module.exports = (req, res, next) => {
     next(new UnauthorizedError('Пользователь не авторизован'))
   }
 
-
   req.user = payload; // в объект запроса записываем payload
 
   next();
