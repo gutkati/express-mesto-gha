@@ -35,7 +35,7 @@ module.exports.login = (req, res, next) => {
     })
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: '7d' });
-      res.cookie('jwt', token, { httpOnly: true, sameSite: true }).send({ token });
+      res.cookie('jwt', token, { httpOnly: true, sameSite: true }).send({ message: 'Авторизация прошла успешно!' });
     })
     .catch((err) => next(err));
 };
@@ -48,8 +48,11 @@ module.exports.createUser = (req, res, next) => { // создать пользо
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     })) // записываем данные в базу
-    .then(() => res.status(201).send({
-      name, about, avatar, email,
+    .then((user) => res.status(201).send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
     })) // возвращаем записанные данные в базу пользователю
     .catch((err) => {
       if (err.code === 11000) { // если пользователь регистрируется по существующему в базе email
@@ -67,7 +70,7 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getInfoAboutMe = (req, res, next) => {
-  User.findOne({ id: req.params.id }) // поиск конкретного документа, ищет запись по _id
+  User.findById(req.user._id) // поиск конкретного документа, ищет запись по _id
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь по указанному Id не найден');

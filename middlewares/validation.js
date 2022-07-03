@@ -26,25 +26,25 @@ module.exports.creatCardValid = celebrate({
 
 module.exports.updateProfileValid = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
   }),
 });
 
 module.exports.updateAvatarValid = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(/https?:\/\/w?w?w?\.?[\w\W]{1,}/),
+    avatar: Joi.string().required().pattern(/https?:\/\/w?w?w?\.?[\w\W]{1,}/),
   }),
 });
 
 module.exports.userIdValid = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
+    userId: Joi.string().required().alphanum().length(24),
   }),
 });
 
 module.exports.cardIdValid = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().required().alphanum().length(24),
   }),
 });
