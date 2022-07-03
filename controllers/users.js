@@ -70,7 +70,7 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getInfoAboutMe = (req, res, next) => {
-  User.findById(req.user._id) // поиск конкретного документа, ищет запись по _id
+  User.findById(req.user._id) // находит текущего пользователя по _id
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь по указанному Id не найден');
@@ -82,7 +82,7 @@ module.exports.getInfoAboutMe = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.userId) // поиск конкретного документа, ищет запись по _id
+  User.findById(req.params.userId) // возвращает первого пользователя из базы по _id
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь по указанному Id не найден');
