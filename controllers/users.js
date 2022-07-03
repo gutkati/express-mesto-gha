@@ -1,12 +1,12 @@
-const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 const ConflictError = require('../errors/ConflictError'); // 409
 const NotFoundError = require('../errors/NotFoundError'); // 404
 const UnauthorizedError = require('../errors/UnauthorizedError'); // 401
 const ValidationError = require('../errors/ValidationError'); // 400
 
-const SECRET_KEY = "some-secret-key";
+const SECRET_KEY = 'some-secret-key';
 
 function describeErrors(err, res, next) {
   if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -21,35 +21,41 @@ module.exports.login = (req, res, next) => {
 
   User.findOne({ email }).select('+password') // вызвать метод select, так получаем хэш пароля
     .then((user) => {
-      if(!user) { // пользователь не найден - отклоняем промис
-        throw new UnauthorizedError('Неправильные почта или пароль')
+      if (!user) { // пользователь не найден - отклоняем промис
+        throw new UnauthorizedError('Неправильные почта или пароль');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) { // хэши не совпали - отклоняем промис
-            throw new UnauthorizedError('Неправильные почта или пароль')
+            throw new UnauthorizedError('Неправильные почта или пароль');
           }
 
           return user;
-      })
+        });
     })
     .then((user) => {
-      const token = jwt.sign({_id: user._id}, SECRET_KEY, { expiresIn: '7d' })
-      res.cookie('jwt', token, { httpOnly: true, sameSite: true }).send({ token })
+      const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: '7d' });
+      res.cookie('jwt', token, { httpOnly: true, sameSite: true }).send({ token });
     })
     .catch((err) => next(err));
 };
 
 module.exports.createUser = (req, res, next) => { // создать пользователя
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
   bcrypt.hash(password, 10) // хешируем пароль
-    .then((hash) => User.create({ name, about, avatar, email, password: hash })) // записываем данные в базу
-    .then(() => res.status(201).send({ name, about, avatar, email })) // возвращаем записанные данные в базу пользователю
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    })) // записываем данные в базу
+    .then(() => res.status(201).send({
+      name, about, avatar, email,
+    })) // возвращаем записанные данные в базу пользователю
     .catch((err) => {
-      if(err.code === 11000) { // если пользователь регистрируется по существующему в базе email
-        next(new ConflictError('Данный email уже существует'))
+      if (err.code === 11000) { // если пользователь регистрируется по существующему в базе email
+        next(new ConflictError('Данный email уже существует'));
       } else {
-        describeErrors(err, res, next)
+        describeErrors(err, res, next);
       }
     });
 };
@@ -70,8 +76,7 @@ module.exports.getInfoAboutMe = (req, res, next) => {
       }
     })
     .catch((err) => describeErrors(err, res, next));
-
-}
+};
 
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId) // поиск конкретного документа, ищет запись по _id

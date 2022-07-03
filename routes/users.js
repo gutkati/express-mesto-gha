@@ -11,8 +11,8 @@ const {
 const {
   updateProfileValid,
   updateAvatarValid,
-  userIdValid
-} = require('../middlewares/validation')
+  userIdValid,
+} = require('../middlewares/validation');
 
 router.get('/users', getUsers); // возвращает всех пользователей из базы данных
 router.get('/users/me', getInfoAboutMe); // возвращает информацию о пользователе.
